@@ -11,6 +11,27 @@ OneToOne, OneToMany, ManyToMany, ManyToOne 등으로 정의된 객체에서 모�
 
 Cascade 의 속성을 잘 활용하면 엔티티의 변경이 발생시 연관관계에 해당하는 엔티티에게도 전이를 일으켜서 저장/삭제/수정 구문을 하드코딩하지 않고도 엔티티 매니저가 저장/삭제/수정을 수행하도록  할 수 있습니다.<br/>
 
+실무에서는 직접 Repository 에 접근해서 save(), remove() 하기보다는 Cascade.PERSIST, Cascade.REMOVE 등을 이용하는 경우가 많습니다.<br/>
+
+<br/>
+
+CascadeType 은 다음과 같은 종류들이 있습니다.
+
+- PERSIST : book 이 PERSIST 를 하는 순간에 연관관계에 있는 Publisher 도 Persist 를 합니다.
+- MERGE : book 이 MERGE(update 쿼리) 가 일어나는 순간에 연관관계에 있는 Publisher 도 Merge 를 합니다.
+- DETACH : book 이 DETACH 를 하는 순간에 연관관계에 있는 Publisher 도 DETACH 를 합니다..
+- REFRESH : book 엔티티를 다시 로딩을 했을 때 연관관계에 있는 Publisher 도 Refresh 를 합니다..
+- ALL : 모든 경우에 대해 영속성 전이를 하도록 지정합니다.
+- REMOVE : cascade 를 사용할 때 많이 사용하는 옵션이기도 하지만, 실수했을때 잘못될 가능성이 크기 때문에 주의가 필요한 옵션입니다.
+  - 현업에서는 주로 Remove 를 바로 하기보다는 해당 row 를 delete = true 마스킹을 하는 soft delete 방식을 채택합니다.
+  - 여기에 대해서는 이 글의 후반부에 따로 정리합니다.
+
+
+
+orphanRemoval 설명(요약) 추가 (퇴근 후)
+
+<br/>
+
 
 
 ## e.g. `@OneToMany` 의 cascade 속성
@@ -202,21 +223,34 @@ public class Book extends BaseEntity {
 
 
 
-## Cascade.PERSIST, Cascade.REMOVE
+## Cascade.REMOVE
 
-실무에서는 직접 Repository 에 접근해서 save(), remove() 하기보다는 Cascade.PERSIST, Cascade.REMOVE 를 이용하는 경우가 많습니다.<br/>
+CascadeType.REMOVE 를 사용하면 객체 삭제시 연관관계에 대한 필드도 함께 삭제합니다.<br/>
+
+하지만 CascadeType.REMOVE 만 사용하면 연관관계 필드를 null 로 지정할 때 삭제는 되지 않습니다. 
+만약 연관관계 필드를 null 로 지정했을 때 그 연관관계 필드가 삭제되게끔 하고 싶다면 orphanRemoval 을 상대편 객체에 지정해주면 됩니다. 
 
 참고로 cascade 는 아래와 같이 `default = {}` 로 선언되어 있기 때문에 연관관계 필드에 cascade 속성을 지정하지 않으면 영속성전이가 일어나지 않습니다.
 
-```java
-@Target({METHOD, FIELD}) 
-@Retention(RUNTIME)
+<br/>
 
-public @interface OneToMany {
+
+
+### e.g. CascadeType.REMOVE
+
+Book.java
+
+```java
+// ...
+@Entity
+public class Book extends BaseEntity {
+    
     // ...
 
-    /** (Optional) ... */
-    CascadeType[] cascade() default {}; // cascade 
+    // CascadeType.REMOVE 를 추가해줬다. 
+    @ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE })
+    @ToString.Exclude
+    private Publisher publisher;
 
     // ...
 }
@@ -226,11 +260,158 @@ public @interface OneToMany {
 
 
 
+테스트코드
+
+```java
+@SpringBootTest
+public class BookRepositoryTest {
+    @Autowired
+    private BookRepository bookRepository;
+    @Autowired
+    private PublisherRepository publisherRepository;
+    @Autowired
+    private ReviewRepository reviewRepository;
+    @Autowired
+    private UserRepository userRepository;
+
+    @Test
+    void bookRemoveByCascadeTest() {
+        bookRepository.deleteById(1L);
+
+        System.out.println("books : " + bookRepository.findAll());
+        System.out.println("publishers : " + publisherRepository.findAll());
+
+        bookRepository.findAll().forEach(book -> System.out.println(book.getPublisher()));
+    }
+}
+```
+
+<br/>
+
+샘플데이터를 book(id=1, publisher_id=1, ...), book(id=2, publisher_id=1, ...) 으로 데이터를 입력해둔 후에 
+실행결과를 보면 다음과 같이 수행됩니다.
+
+- book id=1 인 book 에 대해서는 delete from book where id=? , delete from publisher where id=? 이 호출됩니다.
+- book id=2 인 book 에 대해서는 update book set publisher_id=null where publisher_id=? 이 호출됩니다.
+
+<br/>
+
+
+
+### e.g. CascadeType.REMOVE 없이 삭제 수행
+
+BookEntity
+
+```java
+// ...
+@Entity
+public class Book extends BaseEntity {
+    
+    // ...
+
+    // CascadeType.REMOVE 를 추가해줬다. 
+    @ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE})
+    @ToString.Exclude
+    private Publisher publisher;
+
+    // ...
+}
+```
+
+<br/>
+
+
+
+테스트 코드
+
+```java
+@SpringBootTest
+public class BookRepositoryTest {
+    @Autowired
+    private BookRepository bookRepository;
+    @Autowired
+    private PublisherRepository publisherRepository;
+    @Autowired
+    private ReviewRepository reviewRepository;
+    @Autowired
+    private UserRepository userRepository;
+
+    @Test
+    void bookCascadeTest() {
+        Book book = new Book();
+        book.setName("다이어트 혁명");
+
+        Publisher publisher = new Publisher();
+        publisher.setName("21세기 북스");
+
+        book.setPublisher(publisher);
+        bookRepository.save(book);
+
+        // 실제 코드 작성 없이 영속성 전이로 이뤄지는지를 테스트할 것이기에 publisher 측의 코드들은 주석처리
+        // publisher.addBook(book);
+        // publisherRepository.save(publisher);
+
+
+        System.out.println("books : " + bookRepository.findAll());
+        System.out.println("publishers : " + publisherRepository.findAll());
+
+        Book book1 = bookRepository.findById(1L).get();
+        book1.getPublisher().setName("만칼로리 혁명");
+
+        bookRepository.save(book1);
+        System.out.println("publishers : " + publisherRepository.findAll());
+
+        // 새로 추가해준 부분 //////////////
+        Book book2 = bookRepository.findById(1L).get();
+        bookRepository.delete(book2); // (1)
+
+        System.out.println("books : " + bookRepository.findAll()); // (2)
+        System.out.println("publishers : " + publisherRepository.findAll()); // (2)
+    }
+}
+```
+
+(1)
+
+- bookRepository.delete(book2) 를 할때 book 에 연관된 publisher 에는 아무 동작이 일어나지 않습니다.
+
+(2)
+
+- 데이터를 확인해보면 book 데이터가 없더라도 publisher 는 존재하는 버그가 발생하게 됩니다.
+
+<br/>
+
+
+
+## cascade - 이 외의 다른 CascadeType 들
+
+- DETACH : book 이 DETACH 를 하는 순간에 연관관계에 있는 Publisher 도 DETACH 를 합니다..
+- REFRESH : book 엔티티를 다시 로딩을 했을 때 연관관계에 있는 Publisher 도 Refresh 를 합니다..
+- ALL : 모든 경우에 대해 영속성 전이를 하도록 지정합니다.
+- REMOVE : cascade 를 사용할 때 많이 사용하는 옵션이기도 하지만, 실수했을때 잘못될 가능성이 크기 때문에 주의가 필요한 옵션입니다.
+  - 현업에서는 주로 Remove 를 바로 하기보다는 해당 row 를 delete = true 마스킹을 하는 soft delete 방식을 채택합니다.
+  - 여기에 대해서는 이 글의 후반부에 따로 정리합니다.
+
+<br/>
+
+
+
 ## 고아 제거 속성 (orphanRemoval)
+
+CascadeType.REMOVE 를 사용하면 객체 삭제시 연관관계에 대한 필드도 함께 삭제합니다.<br/>
+
+하지만 CascadeType.REMOVE 만 사용하면 연관관계 필드를 null 로 지정할 때 삭제는 되지 않습니다. 
+만약 연관관계 필드를 null 로 지정했을 때 그 연관관계 필드가 삭제되게끔 하고 싶다면 orphanRemoval 을 상대편 객체에 지정해주면 됩니다. <br/>
+
+
 
 퇴근 후 정리 예정
 
 
+
+## Soft Delete
+
+퇴근 후 정리 예정
 
 
 
