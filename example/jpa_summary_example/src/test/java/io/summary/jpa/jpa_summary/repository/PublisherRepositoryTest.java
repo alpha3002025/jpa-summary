@@ -32,7 +32,7 @@ public class PublisherRepositoryTest {
   @Transactional
   @Test
   public void test__책정보와_함께_출판사정보를_조회(){
-    Publisher publisher = publisherRepository.findBookDetailDtoById(1L);
+    Publisher publisher = publisherRepository.findBookByIdFetch(1L);
     logger.info("publisher == {}", publisher.toString());
     publisher.getBooks().forEach(book -> logger.info("book.name = {}", book.getName()));
   }

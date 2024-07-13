@@ -1,18 +1,16 @@
 package io.summary.jpa.jpa_summary.repository;
 
-import io.summary.jpa.jpa_summary.dto.BookDetailDto;
 import io.summary.jpa.jpa_summary.entity.Book;
-import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 public interface BookRepository extends JpaRepository<Book, Long> {
-
   @Query(
-      "select new io.summary.jpa.jpa_summary.dto.BookDetailDto("
-          + " b.publisher.name, b.publisher.id, b.name, b.id"
-          + ") "
+      "select b "
       + "from Book b "
-      + "inner join b.publisher ")
-  BookDetailDto findByIdReturnBookDetailDto(Long id);
+      + "inner join fetch b.reviewList "
+      + "where b.id = :id"
+  )
+  Book findBookByIdFetch(@Param("id") Long bookId);
 }

@@ -15,7 +15,7 @@ spring:
   sql:
     init:
       mode: never
-      data-locations:
-        - classpath:dataset/book_publisher/data.sql
+#      data-locations:
+#        - classpath:dataset/book_publisher/data.sql
 #      schema-locations:
 #        - classpath:schema.sql

@@ -35,11 +35,16 @@ public class TruncateAllProcessor {
 //    entityManager
 //        .createNativeQuery(String.format("SET FOREIGN_KEY_CHECKS %d", 0)).executeUpdate();
 
-    tableNames.forEach(tableName -> {
+//    tableNames.forEach(tableName -> {
+//      entityManager
+//          .createNativeQuery(String.format("TRUNCATE TABLE %s", tableName))
+//          .executeUpdate();
+//    });
+    for(String table: tableNames){
       entityManager
-          .createNativeQuery(String.format("TRUNCATE TABLE %s", tableName))
+          .createNativeQuery(String.format("TRUNCATE TABLE %s", table))
           .executeUpdate();
-    });
+    }
 
 //    entityManager
 //        .createNativeQuery(String.format("SET FOREIGN_KEY_CHECKS %d", 1)).executeUpdate();

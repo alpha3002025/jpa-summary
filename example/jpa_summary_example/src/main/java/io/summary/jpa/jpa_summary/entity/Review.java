@@ -2,43 +2,34 @@ package io.summary.jpa.jpa_summary.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import java.util.ArrayList;
-import java.util.List;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 
 @Data
 @Entity
-@Table(name = "book")
+@Table(name = "review")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(staticName = "ofAll")
-@EqualsAndHashCode(exclude = {"publisher", "reviewList"})
-public class Book {
+public class Review {
   @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "id", columnDefinition = "BIGINT")
   private Long id;
 
-  @Column(name = "name", columnDefinition = "VARCHAR(200)")
-  private String name;
+  @ManyToOne
+  @JoinColumn(name = "book_id", columnDefinition = "BIGINT")
+  private Book book;
 
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "publisher_id", columnDefinition = "BIGINT")
-  @ToString.Exclude
-  private Publisher publisher;
+  @Column(name = "title", columnDefinition = "VARCHAR(100)")
+  private String title;
 
-  @OneToMany(mappedBy = "book")
-  @ToString.Exclude
-  private List<Review> reviewList = new ArrayList<>();
+  @Column(name = "contents", columnDefinition = "VARCHAR(3000)")
+  private String contents;
 }

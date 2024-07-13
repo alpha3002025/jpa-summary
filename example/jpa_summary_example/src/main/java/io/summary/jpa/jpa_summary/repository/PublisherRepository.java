@@ -12,5 +12,5 @@ public interface PublisherRepository extends JpaRepository<Publisher, Long> {
     + "inner join fetch p.books "
     + "where p.id = :id"
   )
-  Publisher findBookDetailDtoById(@Param("id") Long id);
+  Publisher findBookByIdFetch(@Param("id") Long id);
 }
