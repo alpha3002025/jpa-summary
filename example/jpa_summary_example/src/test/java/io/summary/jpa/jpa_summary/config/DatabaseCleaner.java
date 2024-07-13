@@ -2,7 +2,6 @@ package io.summary.jpa.jpa_summary.config;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.stereotype.Component;
