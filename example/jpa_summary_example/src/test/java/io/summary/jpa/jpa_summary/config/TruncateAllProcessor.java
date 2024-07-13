@@ -4,15 +4,17 @@ import jakarta.annotation.PostConstruct;
 import jakarta.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.List;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+@Profile({"mysql-test"})
 @Component
-public class DatabaseCleaner {
+public class TruncateAllProcessor {
   private final List<String> tableNames = new ArrayList<>();
   private final EntityManager entityManager;
 
-  public DatabaseCleaner(EntityManager entityManager){
+  public TruncateAllProcessor(EntityManager entityManager){
     this.entityManager = entityManager;
   }
 

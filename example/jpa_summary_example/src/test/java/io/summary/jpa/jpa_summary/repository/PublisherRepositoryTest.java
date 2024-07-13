@@ -14,7 +14,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 @ExtendWith(DatabaseClearExtension.class)
-@ActiveProfiles({"mysql"})
+@ActiveProfiles({"mysql-test"})
 @SpringBootTest
 public class PublisherRepositoryTest {
   @Autowired
