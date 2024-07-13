@@ -11,9 +11,11 @@ import org.springframework.transaction.annotation.Transactional;
 @Component
 public class DatabaseCleaner {
   private final List<String> tableNames = new ArrayList<>();
+  private final EntityManager entityManager;
 
-  @PersistenceContext
-  private EntityManager entityManager;
+  public DatabaseCleaner(EntityManager entityManager){
+    this.entityManager = entityManager;
+  }
 
   @PostConstruct
   @SuppressWarnings("unchecked")
