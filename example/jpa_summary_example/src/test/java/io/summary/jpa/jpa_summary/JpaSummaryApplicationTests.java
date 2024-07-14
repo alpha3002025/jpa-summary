@@ -8,8 +8,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 @SpringBootTest
 class JpaSummaryApplicationTests {
 
-	@ManyToOne
-	@OneToMany()
 	@Test
 	void contextLoads() {
 	}
