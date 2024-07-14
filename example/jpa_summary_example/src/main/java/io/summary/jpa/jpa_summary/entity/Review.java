@@ -27,6 +27,10 @@ public class Review {
   @JoinColumn(name = "book_id", columnDefinition = "BIGINT")
   private Book book;
 
+  @ManyToOne
+  @JoinColumn(name = "user_id", columnDefinition = "BIGINT")
+  private User user;
+
   @Column(name = "title", columnDefinition = "VARCHAR(100)")
   private String title;
 
