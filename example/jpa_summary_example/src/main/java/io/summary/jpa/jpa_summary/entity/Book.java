@@ -25,14 +25,7 @@ import lombok.ToString;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(staticName = "ofAll")
 @EqualsAndHashCode(exclude = {"publisher", "reviewList"})
-public class Book {
-  @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @Column(name = "id", columnDefinition = "BIGINT")
-  private Long id;
-
-  @Column(name = "name", columnDefinition = "VARCHAR(200)")
-  private String name;
-
+public class Book extends Item {
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "publisher_id", columnDefinition = "BIGINT")
   @ToString.Exclude

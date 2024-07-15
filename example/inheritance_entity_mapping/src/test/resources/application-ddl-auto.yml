@@ -1,0 +1,12 @@
+spring:
+  datasource:
+    hikari:
+      jdbc-url: jdbc:mysql://127.0.0.1:23306/jpa_mysql?characterEncoding=UTF-8&serverTimezone=UTC&rewriteBatchedStatements=true
+      driver-class-name: com.mysql.jdbc.Driver
+      username: root
+      password: test1357
+      schema: jpa_mysql
+  jpa:
+    hibernate:
+      ddl-auto: create
+    show-sql: true
