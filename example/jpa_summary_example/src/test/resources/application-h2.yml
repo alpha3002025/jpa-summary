@@ -8,6 +8,6 @@ spring:
     init:
       mode: always
       data-locations:
-        - classpath:dataset/book_publisher/data.sql
+        - classpath:dataset/1_book_publisher/data.sql
       schema-locations:
         - classpath:schema-h2.sql

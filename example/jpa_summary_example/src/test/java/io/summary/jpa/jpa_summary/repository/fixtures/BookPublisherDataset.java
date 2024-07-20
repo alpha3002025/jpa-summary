@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Profile({"mysql-test"})
 @Component
@@ -14,6 +15,7 @@ public class BookPublisherDataset {
     this.dataSource = dataSource;
   }
 
+  @Transactional
   public void fetchDataSql(){
     ClassPathResource resource = new ClassPathResource("dataset/1_book_publisher/data.sql");
     ResourceDatabasePopulator populator = new ResourceDatabasePopulator(resource);
