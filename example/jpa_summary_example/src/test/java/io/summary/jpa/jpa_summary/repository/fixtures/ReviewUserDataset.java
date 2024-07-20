@@ -49,7 +49,7 @@ public class ReviewUserDataset {
 
   @Transactional
   public void fetchDataSql(){
-    ClassPathResource resource = new ClassPathResource("dataset/review_user/data.sql");
+    ClassPathResource resource = new ClassPathResource("dataset/1_review_user/data.sql");
     ResourceDatabasePopulator populator = new ResourceDatabasePopulator(resource);
     populator.execute(dataSource);
   }

@@ -15,7 +15,7 @@ public class BookPublisherDataset {
   }
 
   public void fetchDataSql(){
-    ClassPathResource resource = new ClassPathResource("dataset/book_publisher/data.sql");
+    ClassPathResource resource = new ClassPathResource("dataset/1_book_publisher/data.sql");
     ResourceDatabasePopulator populator = new ResourceDatabasePopulator(resource);
     populator.execute(dataSource);
   }
