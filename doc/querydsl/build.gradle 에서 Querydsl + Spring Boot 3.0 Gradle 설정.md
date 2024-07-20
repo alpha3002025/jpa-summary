@@ -1,0 +1,60 @@
+# build.gradle 에서 Querydsl + Spring Boot 3.0 Gradle 설정
+
+## 참고자료
+
+- Querydsl Spring Boot 3.0 의 gradle 설정을 공유합니다.
+
+<br/>
+
+
+
+## build.gradle
+
+스프링부트 3.0 , 자바 17 기준 Querydsl, Spring Boot 3.0 설정입니다.
+
+```java
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '3.0.0'
+	id 'io.spring.dependency-management' version '1.1.0'
+}
+
+group = 'study'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '17'
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	compileOnly 'org.projectlombok:lombok'
+	runtimeOnly 'com.h2database:h2'
+	annotationProcessor 'org.projectlombok:lombok'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+	// Querydsl 추가
+	implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
+	annotationProcessor "com.querydsl:querydsl-apt:${dependencyManagement.importedProperties['querydsl.version']}:jakarta"
+	annotationProcessor "jakarta.annotation:jakarta.annotation-api"
+	annotationProcessor "jakarta.persistence:jakarta.persistence-api"
+
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}
+```
+
+<br/>
+
+
+
