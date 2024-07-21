@@ -34,4 +34,4 @@ insert into item(name, price, dtype) values('퀸의 대각선 2', 15120, 'Book')
 insert into book(id, publisher_id) values(8, 3);
 
 insert into item(name, price, dtype) values('우리는 왜 잠을 자야 할까', 20700, 'Book');
-insert into book(id, publisher_id) values(8, 3);
+insert into book(id, publisher_id) values(9, 3);

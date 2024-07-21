@@ -11,6 +11,11 @@ spring:
       ddl-auto: none # 테스트 용도의 별도 docker-mysql 을 돌린다고 가정
     show-sql: true
     defer-datasource-initialization: true # script 파일이 hibernate 초기화 이후 동작하게 하기 위한 옵션
+    properties:
+      hibernate:
+        format_sql: true
+#        use_sql_comments: true
+        highlight_sql: true
   #    generate-ddl: true
   sql:
     init:
@@ -19,3 +24,7 @@ spring:
 #        - classpath:dataset/book_publisher/data.sql
 #      schema-locations:
 #        - classpath:schema.sql
+logging:
+  level:
+    org.hibernate.type.descriptor.sql: trace
+
