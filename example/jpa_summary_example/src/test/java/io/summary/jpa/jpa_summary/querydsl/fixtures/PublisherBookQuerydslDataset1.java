@@ -25,6 +25,12 @@ public class PublisherBookQuerydslDataset1 {
   }
 
   @Transactional
+  public void init(){
+    fetchSchemaSql();
+    fetchDataSql();
+  }
+
+  @Transactional
   public void truncate(){
     entityManager.clear();
 
@@ -37,6 +43,13 @@ public class PublisherBookQuerydslDataset1 {
             .createNativeQuery(String.format("TRUNCATE TABLE %s", table))
             .executeUpdate()
         );
+  }
+
+  @Transactional
+  public void fetchSchemaSql(){
+    ClassPathResource resource = new ClassPathResource("schema/schema.sql");
+    ResourceDatabasePopulator populator = new ResourceDatabasePopulator(resource);
+    populator.execute(dataSource);
   }
 
   @Transactional
