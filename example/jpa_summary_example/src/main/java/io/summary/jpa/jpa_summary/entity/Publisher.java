@@ -22,12 +22,12 @@ import lombok.ToString;
 @Table(name = "publisher")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-@EqualsAndHashCode(exclude = "publisher")
 public class Publisher {
   @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
   @ToString.Exclude
+  @EqualsAndHashCode.Exclude
   @OneToMany(mappedBy = "publisher", cascade = {CascadeType.MERGE, CascadeType.PERSIST})
   private List<Book> books = new ArrayList<>();
 
