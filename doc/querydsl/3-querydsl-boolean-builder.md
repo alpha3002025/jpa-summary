@@ -3,7 +3,9 @@
 - BooleanExpression 을 where 절에 모두 전달해주어서 where 절에서 파악하도록 하는 방식
 - BooleanBuilder 를 이용해서 동적쿼리를 만들어내는 방식
 
-이렇게 두 가지 방법이 있으며 그 중 BooleanBuilder 를 사용시에는 NPE(Null Pointer Exception)을 조심해야 하기에 이 부분에 중점을 둔 null safe builder 역시 문서에 정리해두었습니다. 간단한 코드의 경우 BooleanExpression 을 where 절에 모두 전달해서 where 절 조건문을 작성하는 방식이 좋지만 표현식을 재사용해야 할 경우에는 BooleanBuilder 를 사용합니다.<br/>
+where 조건절을 동적으로 구성하는  동적쿼리를 만드는  두 가지 방법이 있습니다. 이 중 BooleanBuilder 를 사용시에는 NPE(Null Pointer Exception)을 조심해야 하기에 이 부분에 중점을 둔 null safe builder 역시 문서에 정리해두었고, null 값에 대해 비어있는 BooleanBuilder 객체를 생성하는 부분역시 주의해서 확인해주시기 바랍니다.  
+
+간단한 코드의 경우 BooleanExpression 을 where 절에 모두 전달해서 where 절 조건문을 작성하는 방식이 좋지만 표현식을 재사용해야 할 경우에는 BooleanBuilder 를 사용하는 것을 추천합니다.<br/>
 
 <br/>
 
