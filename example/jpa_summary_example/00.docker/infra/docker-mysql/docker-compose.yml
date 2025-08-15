@@ -1,7 +1,7 @@
-version: '3.7'
 services:
   example-mysql:
     image: mysql:8.0.38-debian
+    platform: linux/amd64  # ARM64 호환성을 위한 플랫폼 지정
     restart: always
     #    command: --lower_case_table_names=1
     container_name: mysql-for-jpa
